@@ -4,7 +4,7 @@ namespace CakePHP3Utilities\Controller\Component;
 use Cake\Controller\Component;
 use Cake\Core\Configure;
 
-require_once '../../Cpanel/xmlapi.php';
+require_once dirname(dirname(dirname(__FILE__))) . '/Cpanel/xmlapi.php';
 
 class CPanelComponent extends Component
 {
@@ -14,10 +14,10 @@ class CPanelComponent extends Component
     public function initialize(array $config)
     {
         $this->xmlapi = new \xmlapi(Configure::read('CPanel.domain'));
-        $xmlapi->set_port(Configure::read('CPanel.port'));
-        $xmlapi->password_auth(Configure::read('CPanel.username'), Configure::read('CPanel.password'));
-        $xmlapi->set_output('json');
-        $xmlapi->set_debug(Configure::read('CPanel.debug'));
+        $this->xmlapi->set_port(Configure::read('CPanel.port'));
+        $this->xmlapi->password_auth(Configure::read('CPanel.username'), Configure::read('CPanel.password'));
+        $this->xmlapi->set_output('json');
+        $this->xmlapi->set_debug(Configure::read('CPanel.debug'));
     }
 
     public function tests()
