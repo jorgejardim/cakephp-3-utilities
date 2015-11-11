@@ -10,48 +10,74 @@ class CPanelComponent extends Component
 {
     public  $xmlapi;
     public  $error;
+    public  $return;
+    public  $output;
+    public  $config;
 
     public function initialize(array $config)
     {
-        $this->xmlapi = new \xmlapi(Configure::read('CPanel.domain'));
-        $this->xmlapi->set_port(Configure::read('CPanel.port'));
-        $this->xmlapi->password_auth(Configure::read('CPanel.username'), Configure::read('CPanel.password'));
+        $this->connect();
+    }
+
+    public function connect($config = 'default')
+    {
+        $this->config = Configure::read('CPanel.'.$config);
+        $this->xmlapi = new \xmlapi($this->config['domain']);
+        $this->xmlapi->set_port($this->config['port']);
+        $this->xmlapi->password_auth($this->config['username'], $this->config['password']);
         $this->xmlapi->set_output('json');
-        $this->xmlapi->set_debug(Configure::read('CPanel.debug'));
+        $this->xmlapi->set_debug($this->config['debug']);
     }
 
-    public function tests()
+    public function createdAccount($domain, $username, $password, $plan=null)
     {
-        return $this->xmlapi->listzones();
-    }
-
-    public function createdAccount($domain, $username, $password)
-    {
-        $acct = array( 'username' => $username, 'password' => $password, 'domain' => $domain);
-        return $this->xmlapi->createacct($acct);
-    }
-
-    public function listAccount($domain, $username, $password)
-    {
-        $acct = array( 'username' => $username, 'password' => $password, 'domain' => $domain);
-        return $this->xmlapi->createacct($acct);
+        $acct = array('username' => $username, 'password' => $password, 'domain' => $domain, 'contactemail' => $this->config['contact']);
+        if ($plan) {
+            $acct['plan'] = $plan;
+        }
+        $this->output = $this->xmlapi->createacct($acct);
+        $this->return = json_decode($this->output);
+        if ($this->return->result[0]->status===1) {
+            return true;
+        }
+        $this->error = $this->return->result[0]->statusmsg;
+        return false;
     }
 
     public function domainCreatedSub($prefix, $domain, $path='public_html')
     {
         $subDomain = $prefix.'.'.$domain;
         $args = array($subDomain, $domain, 0, 0, $path);
-        return $this->_resultBoolean($this->xmlapi->api1_query(Configure::read('CPanel.username'), 'SubDomain', 'addsubdomain', $args));
+        $this->output = $this->xmlapi->api1_query($this->config['username'], 'SubDomain', 'addsubdomain', $args);
+        $this->return = json_decode($this->output);
+        if (!isset($this->return->error)) {
+            return true;
+        }
+        $this->error = $this->return->error;
+        return false;
     }
 
-    private function _resultBoolean($res)
+    public function createdDB($database, $username, $password)
     {
-        $res  = json_decode($res);
-        if (!isset($res->error)) {
-            return true;
-        } else {
-            $this->error = $res->error;
-            return false;
+        // create database
+        $this->output = $this->xmlapi->api1_query($this->config['username'], 'Mysql', 'adddb', array($database));
+        $this->return = json_decode($this->output);
+        if (!isset($this->return->error)) {
+
+            // create user
+            $user = $this->xmlapi->api1_query($this->config['username'], 'Mysql', 'adduser', array($username, $password));
+
+            // add database user
+            $dbuser = $this->xmlapi->api1_query($this->config['username'], 'Mysql', 'adduserdb', array($database, $username, 'all'));
+
+            $this->output = $user.$dbuser;
+            $this->return = json_decode($dbuser);
+
+            if (!isset($this->return->error)) {
+                return true;
+            }
         }
+        $this->error = $this->return->error;
+        return false;
     }
 }

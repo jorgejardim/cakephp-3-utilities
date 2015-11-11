@@ -14,11 +14,13 @@ require: "jorge/cakephp3utilities": "dev-master"
 
 ```
 'CPanel' => [
-    'domain' => 'tryggu.com.br',
-    'username' => 'tryggu',
-    'password' => 't4r5zjj',
-    'port' => '2082',
-    'debug' => true,
+    'default' => [
+        'domain' => 'tryggu.com.br',
+        'username' => 'tryggu',
+        'password' => 't4r5zjj',
+        'port' => '2082',
+        'debug' => true
+    ]
 ],
 'Gerencianet' => [
     'token' => 'ADFS7F834KDJULJORGE5993485H5KK3GG2234678',
