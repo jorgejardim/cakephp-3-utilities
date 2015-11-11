@@ -3,6 +3,7 @@ namespace CakePHP3Utilities\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Routing\Router;
+use Cake\Core\Configure;
 
 class GerencianetComponent extends Component
 {
@@ -99,8 +100,10 @@ class GerencianetComponent extends Component
         return $this->xml->asXML();
     }
 
-    public function enviar($token, $test=false)
+    public function enviar($test=false)
     {
+        $token = Configure::read('Gerencianet.$token');
+
         if ($this->assinatura) {
             $url  = $test ? $this->assinatura_url_test : $this->assinatura_url;
         } else {

@@ -3,13 +3,29 @@
 - Gerencianet
 - Cpanel XmlApi
 
-## Instalação
+## Install
 
-Via composer:
+Composer:
 ```
 require: "jorge/cakephp3utilities": "dev-master"
 ```
-## Example Gerencianet
+
+## Configuration
+
+```
+'CPanel' => [
+    'domain' => 'tryggu.com.br',
+    'username' => 'tryggu',
+    'password' => 't4r5zjj',
+    'port' => '2082',
+    'debug' => true,
+],
+'Gerencianet' => [
+    'token' => 'ADFS7F834KDJULJORGE5993485H5KK3GG2234678',
+],
+```
+
+## Gerencianet Example
 
 ```
 $this->loadComponent('CakePHP3Utilities.Gerencianet');
@@ -32,36 +48,17 @@ $this->Gerencianet->endereco(
     'Sao Paulo',
     'SP'
 );
-
-//marketplace
 $this->Gerencianet->marketplace('3VTV93SFBKHL');
-
-//assinatura
 $this->Gerencianet->periodicidade(1);
-
-//enviar
-$return = $this->Gerencianet->enviar('ADFS76DF8345N34993485H5KK3GG2234678', true);
+$return = $this->Gerencianet->enviar();
 ```
 
-## Example Cpanel XmlApi
+## Cpanel XmlApi Example
 
 ```
-require VENDORS . 'jorge/cakephp3utilities/src/Cpanel/xmlapi.php';
-
-$domain    = "yourdomain.com.br";
-$subDomain = 'yoursubdomain.yourdomain.com.br';
-$username  = 'cpanelusername';
-$password  = 'xxxxxxx';
-$port      = '2082';
-
-$xmlapi = new \xmlapi($domain);
-$xmlapi->set_port($port);
-$xmlapi->password_auth($username, $password);
-$xmlapi->set_output('json');
-$xmlapi->set_debug(1);
-$args = array($subDomain, $domain, 0, 0, 'public_html');
-$res  = json_decode($xmlapi->api1_query($username, 'SubDomain', 'addsubdomain', $args));
-if (!isset($res->error)) {
+$this->loadComponent('CakePHP3Utilities.CPanel');
+$res = $this->CPanel->tests();
+if ($res) {
     # code...
 } else {
     $this->Flash->error(__($res->error));
