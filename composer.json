@@ -1,7 +1,7 @@
 {
     "name": "jorge/cakephp3utilities",
     "description": "Utilities for CakePHP 3.x",
-    "keywords": ["cake3","cakephp3","cakephp","gerencianet"],
+    "keywords": ["cake3","cakephp3","cakephp","gerencianet","cpanel"],
     "license": "MIT",
     "authors": [
         {

@@ -1,5 +1,8 @@
 #Utilities for CakePHP 3.x
 
+- Gerencianet
+- Cpanel XmlApi
+
 ## Instalação
 
 Via composer:
@@ -38,4 +41,29 @@ $this->Gerencianet->periodicidade(1);
 
 //enviar
 $return = $this->Gerencianet->enviar('ADFS76DF8345N34993485H5KK3GG2234678', true);
+```
+
+## Example Cpanel XmlApi
+
+```
+require VENDORS . 'jorge/cakephp3utilities/src/Cpanel/xmlapi.php';
+
+$domain    = "yourdomain.com.br";
+$subDomain = 'yoursubdomain.yourdomain.com.br';
+$username  = 'cpanelusername';
+$password  = 'xxxxxxx';
+$port      = '2082';
+
+$xmlapi = new \xmlapi($domain);
+$xmlapi->set_port($port);
+$xmlapi->password_auth($username, $password);
+$xmlapi->set_output('json');
+$xmlapi->set_debug(1);
+$args = array($subDomain, $domain, 0, 0, 'public_html');
+$res  = json_decode($xmlapi->api1_query($username, 'SubDomain', 'addsubdomain', $args));
+if (!isset($res->error)) {
+    # code...
+} else {
+    $this->Flash->error(__($res->error));
+}
 ```
