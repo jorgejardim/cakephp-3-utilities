@@ -1,0 +1,22 @@
+{
+    "name": "jorge/gerencianet",
+    "description": "Gerencianet Component para Cake 3.x",
+    "keywords": ["cakephp","gerencianet"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jorge Jardim",
+            "email": "jorge@jorgejardim.com.br",
+            "homepage": "http://www.jorgejardim.com.br/"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.4.16"
+    },
+    "autoload":{
+        "psr-4":{
+            "CakePHP3Utilities\\":"src"
+        }
+    }
+}
