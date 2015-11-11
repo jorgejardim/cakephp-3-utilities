@@ -57,10 +57,9 @@ $return = $this->Gerencianet->enviar();
 
 ```
 $this->loadComponent('CakePHP3Utilities.CPanel');
-$res = $this->CPanel->tests();
-if ($res) {
+if ($this->CPanel->domainCreatedSub('subdomain', 'yourdomain.com.br')) {
     # code...
 } else {
-    $this->Flash->error(__($res->error));
+    $this->Flash->error(__($this->CPanel->error));
 }
 ```

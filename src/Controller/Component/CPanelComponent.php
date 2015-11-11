@@ -41,7 +41,7 @@ class CPanelComponent extends Component
     {
         $subDomain = $prefix.'.'.$domain;
         $args = array($subDomain, $domain, 0, 0, $path);
-        return $this->_resultBoolean($xmlapi->api1_query($username, 'SubDomain', 'addsubdomain', $args));
+        return $this->_resultBoolean($this->xmlapi->api1_query(Configure::read('CPanel.username'), 'SubDomain', 'addsubdomain', $args));
     }
 
     private function _resultBoolean($res)
