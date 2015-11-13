@@ -102,7 +102,7 @@ class GerencianetComponent extends Component
 
     public function enviar($test=false)
     {
-        $token = Configure::read('Gerencianet.$token');
+        $token = Configure::read('Gerencianet.token');
 
         if ($this->assinatura) {
             $url  = $test ? $this->assinatura_url_test : $this->assinatura_url;
