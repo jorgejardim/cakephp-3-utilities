@@ -122,7 +122,7 @@ class FacebookComponent extends Component
             $user['oauth_uid'] = $user['id'];
             $user['oauth_provider'] = 'facebook';
             $user['oauth_token'] = $this->FacebookAccessToken;
-            $user['picture'] = 'http://graph.facebook.com/'.$user['oauth_uid'].'/picture?height=200&width=200';
+            $user['picture'] = 'http://graph.facebook.com/'.$user['oauth_uid'].'/picture?type=large';
             unset($user['id']);
             return $user;
 
