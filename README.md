@@ -65,3 +65,29 @@ if ($this->CPanel->domainCreatedSub('subdomain', 'yourdomain.com.br')) {
     $this->Flash->error(__($this->CPanel->error));
 }
 ```
+
+## Example of Validation of Brazilian data
+
+Add on Model:
+
+```php
+<?php
+
+public function validationDefault(Validator $validator)
+{
+    $validator
+        ->provider('custom', new \JCustomCakephp3\Validation\CustomProvider)
+        ->add('birth', 'valid', ['rule' => 'dateBR', 'provider' => 'custom'])
+        ->requirePresence('birth', 'create')
+        ->notEmpty('birth');
+}
+```
+
+Rules:
+- dateBR
+- datetimeBR
+- cnpj
+- cpf
+- cep
+- phone
+- cellphone

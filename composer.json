@@ -10,10 +10,12 @@
             "homepage": "http://www.jorgejardim.com.br/"
         }
     ],
-    "minimum-stability": "dev",
     "require": {
-        "php": ">=5.4.16"
+        "php": ">=5.4.16",
+        "cakephp/cakephp": "~3.0",
+        "facebook/php-sdk-v4": "^5.1"
     },
+    "minimum-stability": "dev",
     "autoload":{
         "psr-4":{
             "CakePHP3Utilities\\":"src"
