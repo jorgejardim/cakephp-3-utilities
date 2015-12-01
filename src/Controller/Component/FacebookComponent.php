@@ -83,10 +83,10 @@ class FacebookComponent extends Component
         try {
             $accessToken = $this->FacebookHelper->getAccessToken();
         } catch(FacebookResponseException $e) {
-            $this->Controller->Flash->error(__('Graph returned an error: ' . $e->getMessage()));
+            $this->Controller->Flash->error(__('Graph returned an error: ' . $e->getMessage()), ['key' => 'auth']);
             return false;
         } catch(FacebookSDKException $e) {
-            $this->Controller->Flash->error(__('Facebook SDK returned an error: ' . $e->getMessage()));
+            $this->Controller->Flash->error(__('Facebook SDK returned an error: ' . $e->getMessage()), ['key' => 'auth']);
             return false;
         }
 
@@ -96,13 +96,13 @@ class FacebookComponent extends Component
                 $msg .= "Error Code: " . $this->FacebookHelper->getErrorCode() . "<br>";
                 $msg .= "Error Reason: " . $this->FacebookHelper->getErrorReason() . "<br>";
                 $msg .= "Error Description: " . $this->FacebookHelper->getErrorDescription() . "<br>";
-                $this->Controller->Flash->error(__('Facebook SDK returned an error: ' . $msg));
+                $this->Controller->Flash->error(__('Facebook SDK returned an error: ' . $msg), ['key' => 'auth']);
                 return false;
             } else {
-                $this->Controller->Flash->error(__('Bad request'));
+                $this->Controller->Flash->error(__('Bad request'), ['key' => 'auth']);
                 return false;
             }
-            $this->Controller->Flash->error(__('Bad request'));
+            $this->Controller->Flash->error(__('Bad request'), ['key' => 'auth']);
             return false;
         }
 
@@ -127,13 +127,13 @@ class FacebookComponent extends Component
             return $user;
 
         } catch(FacebookResponseException $e) {
-            $this->Controller->Flash->error(__('Graph returned an error: ' . $e->getMessage()));
+            $this->Controller->Flash->error(__('Graph returned an error: ' . $e->getMessage()), ['key' => 'auth']);
             return false;
         } catch(FacebookSDKException $e) {
-            $this->Controller->Flash->error(__('Facebook SDK returned an error: ' . $e->getMessage()));
+            $this->Controller->Flash->error(__('Facebook SDK returned an error: ' . $e->getMessage()), ['key' => 'auth']);
             return false;
         }
-        $this->Controller->Flash->error(__('Bad request'));
+        $this->Controller->Flash->error(__('Bad request'), ['key' => 'auth']);
         return false;
     }
 }
