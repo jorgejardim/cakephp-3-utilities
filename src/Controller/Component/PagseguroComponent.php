@@ -26,6 +26,7 @@ class PagseguroComponent extends Component
     {
         $id = $id ? $id : uniqid();
         $custo = number_format($custo, 2, '.', '');
+        $quantidade = $quantidade ? $quantidade : 1;
         $this->request_pg->addItem($id, $descricao, $quantidade, $custo);
     }
 

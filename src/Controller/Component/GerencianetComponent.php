@@ -21,7 +21,7 @@ class GerencianetComponent extends Component
         $this->xml->addChild('cliente');
     }
 
-    public function item($descricao=null, $quantidade=null, $custo=null)
+    public function item($descricao=null, $quantidade=null, $custo=null, $id=null)
     {
         $this->xml->itens->item->addChild('itemValor', preg_replace('/\D/', '', $custo));
         $this->xml->itens->item->addChild('itemDescricao', $descricao);
