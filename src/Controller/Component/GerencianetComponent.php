@@ -21,13 +21,53 @@ class GerencianetComponent extends Component
         $this->xml->addChild('cliente');
     }
 
-    public function item($descricao=null,$quantidade=null,$custo=null)
+    public function item($descricao=null, $quantidade=null, $custo=null)
     {
         $this->xml->itens->item->addChild('itemValor', preg_replace('/\D/', '', $custo));
         $this->xml->itens->item->addChild('itemDescricao', $descricao);
         if ($quantidade) {
             $this->xml->itens->item->addChild('itemQuantidade', $quantidade);
         }
+    }
+
+    public function referencia($referencia)
+    {
+        $this->_retorno();
+        $this->xml->retorno->addChild('identificador', $referencia);
+    }
+
+    public function cliente($nome, $email=null, $telefone=null, $nascimento=null, $documento=null, $tipo_documento='CPF')
+    {
+        $this->xml->cliente->addChild('nome', $nome);
+        $this->xml->cliente->addChild('email', $email);
+        $this->xml->cliente->addChild('celular', preg_replace('/\D/', '', $telefone));
+        $this->xml->cliente->addChild('nascimento', $nascimento); // YYYY-MM-DD
+        $this->xml->cliente->addChild('cpf', preg_replace('/\D/', '', $documento));
+    }
+
+    public function endereco($cep, $logradouro=null, $numero=null, $complemento=null, $bairro=null, $cidade=null, $estado='SP', $pais='BRA')
+    {
+        $this->xml->cliente->addChild('cep', preg_replace('/\D/', '', $cep));
+        $this->xml->cliente->addChild('logradouro', $logradouro);
+        $this->xml->cliente->addChild('numero', $numero);
+        $this->xml->cliente->addChild('complemento', $complemento);
+        $this->xml->cliente->addChild('bairro', $bairro);
+        $this->xml->cliente->addChild('cidade', $cidade);
+        $this->xml->cliente->addChild('estado', $estado);
+    }
+
+    public function retorno($url=null)
+    {
+        $this->_retorno();
+        $url = Router::url($url, true);
+        $this->xml->retorno->addChild('url', $url);
+    }
+
+    public function notificacao($url=null)
+    {
+        $this->_retorno();
+        $url = Router::url($url, true);
+        $this->xml->retorno->addChild('urlNotificacao', $url);
     }
 
     public function periodicidade($periodicidade)
@@ -51,53 +91,20 @@ class GerencianetComponent extends Component
         $this->xml->addChild('descricao', $descricao);
     }
 
-    public function frete($frete)
-    {
-        $this->xml->addChild('frete', preg_replace('/\D/', '', $frete));
-    }
-
     public function desconto($desconto)
     {
         $this->xml->addChild('desconto', preg_replace('/\D/', '', $desconto));
     }
 
-    public function cliente($nome,$email=null,$celular=null,$nascimento=null,$cpf=null)
+    public function frete($frete)
     {
-        $this->xml->cliente->addChild('nome', $nome);
-        $this->xml->cliente->addChild('email', $email);
-        $this->xml->cliente->addChild('celular', preg_replace('/\D/', '', $celular));
-        $this->xml->cliente->addChild('nascimento', $nascimento); // YYYY-MM-DD
-        $this->xml->cliente->addChild('cpf', preg_replace('/\D/', '', $cpf));
-    }
-
-    public function endereco($cep,$logradouro=null,$numero=null,$complemento=null,$bairro=null,$cidade=null,$estado=null)
-    {
-        $this->xml->cliente->addChild('cep', preg_replace('/\D/', '', $cep));
-        $this->xml->cliente->addChild('logradouro', $logradouro);
-        $this->xml->cliente->addChild('numero', $numero);
-        $this->xml->cliente->addChild('complemento', $complemento);
-        $this->xml->cliente->addChild('bairro', $bairro);
-        $this->xml->cliente->addChild('cidade', $cidade);
-        $this->xml->cliente->addChild('estado', $estado);
+        $this->xml->addChild('frete', preg_replace('/\D/', '', $frete));
     }
 
     public function marketplace($codigo)
     {
         $this->xml->itens->item->addChild('marketplace');
         $this->xml->itens->item->marketplace->addChild('codigo', $codigo);
-    }
-
-    public function retorno($identificador, $url=null, $urlNotificacao=null)
-    {
-        $this->xml->addChild('retorno');
-        $this->xml->retorno->addChild('identificador', $identificador);
-        $this->xml->retorno->addChild('url', $url);
-        $this->xml->retorno->addChild('urlNotificacao', $urlNotificacao);
-    }
-
-    public function xml()
-    {
-        return $this->xml->asXML();
     }
 
     public function enviar($test=false)
@@ -123,9 +130,21 @@ class GerencianetComponent extends Component
         return $this->response(curl_exec($ch));
     }
 
+    public function xml()
+    {
+        return $this->xml->asXML();
+    }
+
     private function response($response)
     {
         $response = json_decode(json_encode(simplexml_load_string($response)));
         return $response;
+    }
+
+    private function _retorno()
+    {
+        if(!isset($this->xml->retorno)) {
+            $this->xml->addChild('retorno');
+        }
     }
 }
