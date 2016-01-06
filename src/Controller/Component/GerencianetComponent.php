@@ -8,11 +8,17 @@ use Cake\Core\Configure;
 class GerencianetComponent extends Component
 {
     private $xml;
-    private $assinatura         = false;
+    public $sucesso = false;
+    public $erro    = false;
+    public $link;
+    public $msg;
+    public $codigo;
+    public $referencia;
     public $pagamento_url       = 'https://go.gerencianet.com.br/api/pagamento/xml';
     public $pagamento_url_test  = 'https://go.gerencianet.com.br/teste/api/pagamento/xml';
     public $assinatura_url      = 'https://go.gerencianet.com.br/api/assinatura/xml';
     public $assinatura_url_test = 'https://go.gerencianet.com.br/teste/api/assinatura/xml';
+    private $assinatura         = false;
 
     public function initialize(array $config)
     {
@@ -21,7 +27,7 @@ class GerencianetComponent extends Component
         $this->xml->addChild('cliente');
     }
 
-    public function item($descricao=null, $quantidade=null, $custo=null, $id=null)
+    public function setItem($descricao=null, $quantidade=null, $custo=null, $id=null)
     {
         $this->xml->itens->item->addChild('itemValor', preg_replace('/\D/', '', $custo));
         $this->xml->itens->item->addChild('itemDescricao', $descricao);
@@ -30,13 +36,14 @@ class GerencianetComponent extends Component
         }
     }
 
-    public function referencia($referencia)
+    public function setReferencia($referencia)
     {
         $this->_retorno();
-        $this->xml->retorno->addChild('identificador', $referencia);
+        $this->referencia = $referencia;
+        $this->xml->retorno->addChild('identificador', $this->identificador);
     }
 
-    public function cliente($nome, $email=null, $telefone=null, $nascimento=null, $documento=null, $tipo_documento='CPF')
+    public function setCliente($nome, $email=null, $telefone=null, $nascimento=null, $documento=null, $tipo_documento='CPF')
     {
         $this->xml->cliente->addChild('nome', $nome);
         $this->xml->cliente->addChild('email', $email);
@@ -45,7 +52,7 @@ class GerencianetComponent extends Component
         $this->xml->cliente->addChild('cpf', preg_replace('/\D/', '', $documento));
     }
 
-    public function endereco($cep, $logradouro=null, $numero=null, $complemento=null, $bairro=null, $cidade=null, $estado='SP', $pais='BRA')
+    public function setEndereco($cep, $logradouro=null, $numero=null, $complemento=null, $bairro=null, $cidade=null, $estado='SP', $pais='BRA')
     {
         $this->xml->cliente->addChild('cep', preg_replace('/\D/', '', $cep));
         $this->xml->cliente->addChild('logradouro', $logradouro);
@@ -56,52 +63,52 @@ class GerencianetComponent extends Component
         $this->xml->cliente->addChild('estado', $estado);
     }
 
-    public function retorno($url=null)
+    public function setRetorno($url=null)
     {
         $this->_retorno();
         $url = Router::url($url, true);
         $this->xml->retorno->addChild('url', $url);
     }
 
-    public function notificacao($url=null)
+    public function setNotificacao($url=null)
     {
         $this->_retorno();
         $url = Router::url($url, true);
         $this->xml->retorno->addChild('urlNotificacao', $url);
     }
 
-    public function periodicidade($periodicidade)
+    public function setPeriodicidade($periodicidade)
     {
         $this->assinatura = true;
         $this->xml->addChild('periodicidade', $periodicidade);
     }
 
-    public function ocorrencias($ocorrencias)
+    public function setOcorrencias($ocorrencias)
     {
         $this->xml->addChild('ocorrencias', $ocorrencias);
     }
 
-    public function vencimento($vencimento)
+    public function setVencimento($vencimento)
     {
         $this->xml->addChild('vencimento', $vencimento); // YYYY-MM-DD
     }
 
-    public function descricao($descricao)
+    public function setDescricao($descricao)
     {
         $this->xml->addChild('descricao', $descricao);
     }
 
-    public function desconto($desconto)
+    public function setDesconto($desconto)
     {
         $this->xml->addChild('desconto', preg_replace('/\D/', '', $desconto));
     }
 
-    public function frete($frete)
+    public function setFrete($frete)
     {
         $this->xml->addChild('frete', preg_replace('/\D/', '', $frete));
     }
 
-    public function marketplace($codigo)
+    public function setMarketplace($codigo)
     {
         $this->xml->itens->item->addChild('marketplace');
         $this->xml->itens->item->marketplace->addChild('codigo', $codigo);
@@ -127,7 +134,22 @@ class GerencianetComponent extends Component
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        return $this->response(curl_exec($ch));
+        $response = $this->response(curl_exec($ch));
+        if($response->status == 2) {
+            $this->sucesso = true;
+            $this->erro    = false;
+            $this->link    = $response->resposta->link;
+            $this->msg     = '';
+            $this->codigo  = $response->resposta->transacao;
+        } else {
+            $this->sucesso = false;
+            $this->erro    = true;
+            $this->link    = '';
+            $this->msg     = $response->erros->erros;
+            $this->codigo  = $response->erros->codigo;
+        }
+        return $response;
+
     }
 
     public function xml()
