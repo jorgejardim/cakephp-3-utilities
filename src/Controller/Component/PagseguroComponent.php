@@ -127,6 +127,6 @@ class PagseguroComponent extends Component
     private function _formatMoeda($valor)
     {
         $valor = preg_replace('/\D/', '', $valor);
-        return substr($valor, 0, -2) . ',' . substr($valor, -2);
+        return substr($valor, 0, -2) . '.' . substr($valor, -2);
     }
 }
