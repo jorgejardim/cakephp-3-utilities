@@ -30,12 +30,12 @@ class PagseguroComponent extends Component
         $this->request_pg->setCurrency('BRL');
     }
 
-    public function setItem($descricao=null, $quantidade=null, $custo=null, $id=null)
+    public function setItem($descricao=null, $quantidade=null, $valor=null, $id=null)
     {
         $id = $id ? $id : uniqid();
-        $custo = $this->_formatMoeda($custo);
+        $valor = $this->_formatMoeda($valor);
         $quantidade = $quantidade ? $quantidade : 1;
-        $this->request_pg->addItem($id, $descricao, $quantidade, $custo);
+        $this->request_pg->addItem($id, $descricao, $quantidade, $valor);
     }
 
     public function setReferencia($referencia)
@@ -72,6 +72,8 @@ class PagseguroComponent extends Component
 
     public function setValorExtra($valor)
     {
+        $valor = $this->_formatMoeda($valor);
+        echo $valor;
         $this->request_pg->setExtraAmount($valor);
     }
 
@@ -126,7 +128,10 @@ class PagseguroComponent extends Component
 
     private function _formatMoeda($valor)
     {
-        $valor = preg_replace('/\D/', '', $valor);
+        if (strpos($valor, ',') === false && strpos($valor, '.') === false) {
+            $valor = $valor.'.00';
+        }
+        $valor = preg_replace('/[^0-9-]/', '', $valor);
         return substr($valor, 0, -2) . '.' . substr($valor, -2);
     }
 }
