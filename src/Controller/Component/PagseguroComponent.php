@@ -73,7 +73,6 @@ class PagseguroComponent extends Component
     public function setValorExtra($valor)
     {
         $valor = $this->_formatMoeda($valor);
-        echo $valor;
         $this->request_pg->setExtraAmount($valor);
     }
 
